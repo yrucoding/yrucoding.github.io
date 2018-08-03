@@ -71,6 +71,7 @@
       position: absolute;
       left: 50px;
       right: 50px;
+      z-index: 5;
     }
 
       .slide > img {
@@ -237,7 +238,7 @@
           graphImages.classList.remove("fixed-image-holder");
         }
         setCurrentTextBlock(textBlockIndex);
-      }, 250);
+      }, 1);
       window.addEventListener("scroll", onWindowScroll);
 
       var onWindowResize = debounce(function() {
