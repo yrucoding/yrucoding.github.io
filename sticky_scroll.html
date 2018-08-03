@@ -203,7 +203,22 @@
       // Store the offsetTop that we should make the graph sticky.
       var stickyStartOffsetTop = getAbsoluteOffsetTop(stickyStart);
 
-      function onWindowScroll() {
+      function debounce(func, wait, immediate) {
+        var timeout;
+        return function () {
+          var context = this, args = arguments;
+          var later = function () {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+          };
+          var callNow = immediate && !timeout;
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+          if (callNow) func.apply(context, args);
+        };
+      }
+
+      var onWindowScroll = debounce(function () {
         var scrollY = window.scrollY;
         var viewportHeight = getViewportHeight();
         var scrollYTopThreshold = scrollY + viewportHeight / 2.0;
@@ -222,10 +237,10 @@
           graphImages.classList.remove("fixed-image-holder");
         }
         setCurrentTextBlock(textBlockIndex);
-      }
+      }, 250);
       window.addEventListener("scroll", onWindowScroll);
 
-      function onWindowResize() {
+      var onWindowResize = debounce(function() {
         // Since we might move the graphImages to position: fixed.
         // We need to make sure that its container has a height that we
         // keep the height the same.
@@ -233,7 +248,7 @@
         textBlockTops = getAbsoluteOffsetTops(textBlocks);
         stickyStartOffsetTop = getAbsoluteOffsetTop(stickyStart);
         onWindowScroll();
-      }
+      }, 250);
       window.addEventListener("resize", onWindowResize);
 
       var isLoaded = false;
